@@ -1,0 +1,2 @@
+### RxJava2-Sample
+Playground for RxJava2. It basically follows tutorial from https://github.com/Froussios/Intro-To-RxJava, but converted from RxJava 1.x to RxJava2 and with additional aspects, such as minor optimizations and code clarity improvements. Examples do not  use unit tests style for now, just because the aim is to use RxJava in action rather than to ensure that APIs work as intended according to documentation.
