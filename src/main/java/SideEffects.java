@@ -1,5 +1,4 @@
 import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.ReplaySubject;
 
@@ -146,33 +145,6 @@ public class SideEffects {
             data.subscribe(new PrintObserver<>("Original"));
             data.subscribe(d -> d.name = "Garbage");
             data.subscribe(d -> System.out.println(d.id + ": " + d.name));
-        }
-    }
-
-    private static class PrintObserver<T> implements Observer<T> {
-        private final String name;
-
-        public PrintObserver(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public void onSubscribe(Disposable d) {
-        }
-
-        @Override
-        public void onNext(T v) {
-            System.out.println(name + ": " + v);
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            System.out.println(name + ": Error: " + e);
-        }
-
-        @Override
-        public void onComplete() {
-            System.out.println(name + ": Completed");
         }
     }
 }

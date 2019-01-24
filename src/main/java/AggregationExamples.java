@@ -1,5 +1,4 @@
-import io.reactivex.*;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.Observable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 
@@ -19,30 +18,6 @@ public class AggregationExamples {
         @Override
         public void accept(T t) {
             System.out.println(name + ": " + t);
-        }
-    }
-
-    private static class PrintObserver<T> implements Observer<T> {
-
-        @Override
-        public void onSubscribe(Disposable d) {
-        }
-
-        @Override
-        public void onNext(T t) {
-            System.out.print(t + ",");
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            System.out.println();
-            System.err.println("Error: " + e);
-        }
-
-        @Override
-        public void onComplete() {
-            System.out.println();
-            System.out.println("Completed");
         }
     }
 
@@ -72,8 +47,7 @@ public class AggregationExamples {
      */
     private void reduce() {
         Observable<Integer> values = Observable.fromArray(1, 4, 0, 5, 12);
-        System.out.println("Original:");
-        values.subscribe(new PrintObserver<>());
+        values.subscribe(new PrintObserver<>("Original"));
         values.reduce((i1, i2) -> i1 + i2)
                 .subscribe(new SuccessConsumer<>("Sum"), ON_ERROR, ON_COMPLETE);
 
@@ -86,8 +60,7 @@ public class AggregationExamples {
      */
     private void scan() {
         Observable<Integer> values = Observable.fromArray(1, 4, 0, 5, 12);
-        System.out.println("Original:");
-        values.subscribe(new PrintObserver<>());
+        values.subscribe(new PrintObserver<>("Original"));
         values.scan((i1, i2) -> i1 + i2)
                 .subscribe(new SuccessConsumer<>("Sum"), ON_ERROR, ON_COMPLETE);
 

@@ -1,5 +1,4 @@
 import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
@@ -12,27 +11,6 @@ public class ObservableExamples {
     private static final Consumer<Long> ON_NEXT = v -> System.out.println("Received: " + v);
     private static final Consumer<Throwable> ON_ERROR = e -> System.out.println("Error: " + e);
     private static final Action ON_COMPLETE = () -> System.out.println("Completed");
-
-    private static class DebugObserver<T> implements Observer<T> {
-        @Override
-        public void onSubscribe(Disposable d) {
-        }
-
-        @Override
-        public void onNext(T t) {
-            System.out.println("Received: " + t);
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            System.err.println("Error: " + e);
-        }
-
-        @Override
-        public void onComplete() {
-            System.out.println("Completed");
-        }
-    }
 
     public static void main(String[] args) throws Exception {
         ObservableExamples examples = new ObservableExamples();
@@ -78,7 +56,7 @@ public class ObservableExamples {
      */
     void justObservable() {
         Observable<String> values = Observable.just("one", "two", "three");
-        values.subscribe(new DebugObserver<>());
+        values.subscribe(new PrintObserver<>("Received"));
     }
 
     /**
@@ -86,7 +64,7 @@ public class ObservableExamples {
      */
     void emptyObservable() {
         Observable<Integer> empty = Observable.empty();
-        empty.subscribe(new DebugObserver<>());
+        empty.subscribe(new PrintObserver<>("Received"));
     }
 
     /**
@@ -94,7 +72,7 @@ public class ObservableExamples {
      */
     void neverObservable() {
         Observable<Integer> never = Observable.never();
-        never.subscribe(new DebugObserver<>());
+        never.subscribe(new PrintObserver<>("Received"));
     }
 
     /**
@@ -102,7 +80,7 @@ public class ObservableExamples {
      */
     void errorObservable() {
         Observable<Integer> error = Observable.error(new Exception("Something went wrong"));
-        error.subscribe(new DebugObserver<>());
+        error.subscribe(new PrintObserver<>("Received"));
     }
 
     /**
@@ -147,7 +125,7 @@ public class ObservableExamples {
             o.onNext("Hello");
             o.onComplete();
         });
-        values.subscribe(new DebugObserver<>());
+        values.subscribe(new PrintObserver<>("Received"));
     }
 
     /**
@@ -155,7 +133,7 @@ public class ObservableExamples {
      */
     void rangeObservable() {
         Observable<Integer> range = Observable.range(10, 4);
-        range.subscribe(new DebugObserver<>());
+        range.subscribe(new PrintObserver<>("Received"));
     }
 
     /**
@@ -186,7 +164,7 @@ public class ObservableExamples {
     void timerObservable() throws Exception {
         System.out.println("Waiting...");
         Observable<Long> timer = Observable.timer(2, TimeUnit.SECONDS);
-        timer.subscribe(new DebugObserver<>());
+        timer.subscribe(new PrintObserver<>("Received"));
         Thread.sleep(2500);
     }
 
@@ -203,7 +181,7 @@ public class ObservableExamples {
         new Thread(f).start();
         System.out.println("Waiting...");
         Observable<Integer> futureObservable = Observable.fromFuture(f);
-        futureObservable.subscribe(new DebugObserver<>());
+        futureObservable.subscribe(new PrintObserver<>("Received"));
     }
 
     /**
@@ -217,13 +195,13 @@ public class ObservableExamples {
         new Thread(f).start();
         System.out.println("Now waiting no longer than 1 sec...");
         Observable<Integer> timeoutObservable = Observable.fromFuture(f, 1, TimeUnit.SECONDS);
-        timeoutObservable.subscribe(new DebugObserver<>());
+        timeoutObservable.subscribe(new PrintObserver<>("Received"));
     }
 
     void observableFromArray() {
         Integer[] a = new Integer[]{1, 2, 3};
         Observable<Integer> values = Observable.fromArray(a);
-        values.subscribe(new DebugObserver<>());
+        values.subscribe(new PrintObserver<>("Received"));
     }
 
 }

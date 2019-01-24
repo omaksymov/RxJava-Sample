@@ -1,6 +1,4 @@
 import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
 
 public class ObservableReductionExamples {
 
@@ -27,39 +25,14 @@ public class ObservableReductionExamples {
     }
 
 
-    private static class DebugObserver<T> implements Observer<T> {
-        @Override
-        public void onSubscribe(Disposable d) {
-        }
-
-        @Override
-        public void onNext(T t) {
-            System.out.print(t + ",");
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            System.out.println();
-            System.err.println("Error: " + e);
-        }
-
-        @Override
-        public void onComplete() {
-            System.out.println();
-            System.out.println("Completed");
-        }
-    }
-
     /**
      * Filters only values satisfying given predicate (in example below we get only even numbers from the sequence)
      */
     private void filter() {
         Observable<Integer> values = Observable.range(1, 8);
-        System.out.println("Original:");
-        values.subscribe(new DebugObserver<>());
-        System.out.println("Filtered:");
+        values.subscribe(new PrintObserver<>("Original"));
         values.filter(v -> v % 2 == 0)
-                .subscribe(new DebugObserver<>());
+                .subscribe(new PrintObserver<>("Filtered"));
     }
 
     /**
@@ -67,11 +40,9 @@ public class ObservableReductionExamples {
      */
     private void distinct() {
         Observable<Integer> values = Observable.fromArray(1, 1, 2, 3, 3);
-        System.out.println("Original:");
-        values.subscribe(new DebugObserver<>());
-        System.out.println("Distinct:");
+        values.subscribe(new PrintObserver<>("Original"));
         values.distinct()
-                .subscribe(new DebugObserver<>());
+                .subscribe(new PrintObserver<>("Distinct"));
     }
 
     /**
@@ -80,11 +51,9 @@ public class ObservableReductionExamples {
      */
     private void distinctWithKeySelector() {
         Observable<Character> values = Observable.fromArray('A', 'B', 'b', 'c', 'a');
-        System.out.println("Original:");
-        values.subscribe(new DebugObserver<>());
-        System.out.println("Distinct lower case:");
+        values.subscribe(new PrintObserver<>("Original"));
         values.distinct(c -> Character.toLowerCase(c))
-                .subscribe(new DebugObserver<>());
+                .subscribe(new PrintObserver<>("Distinct lower case"));
     }
 
     /**
@@ -92,11 +61,9 @@ public class ObservableReductionExamples {
      */
     private void distinctUntilChanged() {
         Observable<Character> values = Observable.fromArray('A', 'A', 'B', 'C', 'B', 'b', 'b');
-        System.out.println("Original:");
-        values.subscribe(new DebugObserver<>());
-        System.out.println("Distinct until changed:");
+        values.subscribe(new PrintObserver<>("Original"));
         values.distinctUntilChanged()
-                .subscribe(new DebugObserver<>());
+                .subscribe(new PrintObserver<>("Distinct until changed"));
     }
 
     /**
@@ -105,8 +72,7 @@ public class ObservableReductionExamples {
      */
     private void ignore() {
         Observable<Integer> values = Observable.range(0, 5);
-        System.out.println("Original:");
-        values.subscribe(new DebugObserver<>());
+        values.subscribe(new PrintObserver<>("Original"));
         System.out.println("After ignored:");
         values.ignoreElements()
                 .subscribe(() -> System.out.println("Completed"));
@@ -117,11 +83,9 @@ public class ObservableReductionExamples {
      */
     private void skip() {
         Observable<Integer> values = Observable.range(0, 5);
-        System.out.println("Original:");
-        values.subscribe(new DebugObserver<>());
-        System.out.println("Skip 2:");
+        values.subscribe(new PrintObserver<>("Original"));
         values.skip(2)
-                .subscribe(new DebugObserver<>());
+                .subscribe(new PrintObserver<>("Skip 2"));
     }
 
     /**
@@ -129,11 +93,9 @@ public class ObservableReductionExamples {
      */
     private void skipWhile() {
         Observable<Integer> values = Observable.fromArray(1, 2, 3, 4, 1, 2, 3, 4);
-        System.out.println("Original:");
-        values.subscribe(new DebugObserver<>());
-        System.out.println("Skip while v <= 2 :");
+        values.subscribe(new PrintObserver<>("Original"));
         values.skipWhile(v -> v <= 2)
-                .subscribe(new DebugObserver<>());
+                .subscribe(new PrintObserver<>("Skip while v <= 2"));
     }
 
     /**
@@ -141,21 +103,17 @@ public class ObservableReductionExamples {
      */
     private void take() {
         Observable<Integer> values = Observable.range(0, 5);
-        System.out.println("Original:");
-        values.subscribe(new DebugObserver<>());
-        System.out.println("Take 2:");
+        values.subscribe(new PrintObserver<>("Original"));
         values.take(2)
-                .subscribe(new DebugObserver<>());
+                .subscribe(new PrintObserver<>("Take 2"));
     }
     /**
      * Takes first elements in the sequence while specified predicate is true (in example below v < 3)
      */
     private void takeWhile() {
         Observable<Integer> values = Observable.fromArray(1, 2, 3, 4, 1, 2, 3, 4);
-        System.out.println("Original:");
-        values.subscribe(new DebugObserver<>());
-        System.out.println("Take while v <= 2 :");
+        values.subscribe(new PrintObserver<>("Original"));
         values.takeWhile(v -> v <= 2)
-                .subscribe(new DebugObserver<>());
+                .subscribe(new PrintObserver<>("Take while v <= 2"));
     }
 }
