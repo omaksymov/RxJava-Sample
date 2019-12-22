@@ -20,11 +20,11 @@ public class RxJavaSample {
         urlDict.put("instagram.com", "Instagram");
         query("social")
                 .flatMap(Observable::fromIterable)
-                .flatMap((Function<String, ObservableSource<String>>) s -> Observable.just(urlDict.get(s)))
-                .filter(Objects::nonNull)
+                .filter(urlDict::containsKey)
+                .map(urlDict::get)
                 .take(2)
                 .map(String::toLowerCase)
-                .doOnNext(s -> save(s))
+                .doOnNext(RxJavaSample::save)
                 .subscribe(System.out::println);
         for (Map.Entry<Integer, String> entry : MAP.entrySet()) {
             System.out.println("" + entry.getKey() + " -> " + entry.getValue());
@@ -44,9 +44,10 @@ public class RxJavaSample {
                 return Observable.just(searchSites);
             case "social":
                 List<String> socialSites = new ArrayList<>();
-                socialSites.add("fb.com");
+                socialSites.add("insta");
                 socialSites.add("twitter.com");
-                socialSites.add("instagram.com");
+                socialSites.add("facebook.com");
+                socialSites.add("fb.com");
                 return Observable.just(socialSites);
             default:
                 return Observable.empty();
