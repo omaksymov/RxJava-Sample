@@ -1,3 +1,4 @@
+import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.*;
@@ -16,6 +17,8 @@ public class SubjectExamples {
         examples.replaySubjectLimitedByTime();
         System.out.println("--- BehaviorSubject ---");
         examples.behaviorSubject();
+        System.out.println("--- BehaviorSubject listening to Observable ---");
+        examples.randomBehaviorSubject();
         System.out.println("--- AsyncSubject ---");
         examples.asyncSubject();
         System.out.println("--- Disposable.dispose() on ReplaySubject ---");
@@ -86,6 +89,57 @@ public class SubjectExamples {
         subject.onNext(3);
         subject.onNext(4);
         // Early prints all emitted, late - 2, 3, 4
+    }
+
+    /**
+     * Example of BehaviorSubject being subscribed to emissions of object with specific interval.
+     * It also shows how subscription/unsubscription from observing BehaviorSubject affects this flow.
+     */
+    void randomBehaviorSubject() {
+        final long INTERVAL_CONST = 300L;
+        Observable<String> timer = Observable.interval(INTERVAL_CONST, TimeUnit.MILLISECONDS).map(i ->
+                (i + 1) * INTERVAL_CONST + " milliseconds"
+        );
+        Disposable timerDisposable = timer.subscribe(System.out::println);
+        Observable<User> userSource = Observable.just(
+                new User(true), // 300
+                new User(false), // 600
+                new User(true), // 900
+                new User(false), // 1200
+                new User(true), // 1500
+                new User(false), // 1800
+                new User(true), // 2100
+                new User(false) // 2400
+        );
+        Observable<User> timedUser = Observable.zip(timer, userSource, (time, user) -> user);
+        BehaviorSubject<Boolean> hasSubscriptionSubject = BehaviorSubject.createDefault(false);
+        Disposable d = hasSubscriptionSubject.subscribe(System.out::println);
+        timedUser.map(User::hasSubscription).subscribe(hasSubscriptionSubject);
+        sleep(500);
+        d.dispose();
+        sleep(1000);
+        d = hasSubscriptionSubject.subscribe(System.out::println);
+        sleep(2000);
+        d.dispose();
+        timerDisposable.dispose();
+    }
+
+    private void sleep(long time) {
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static class User {
+        private boolean hasSubscription;
+        public boolean hasSubscription() {
+            return hasSubscription;
+        }
+        public User(boolean hasSubscription) {
+            this.hasSubscription = hasSubscription;
+        }
     }
 
     /**
